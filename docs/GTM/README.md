@@ -14,7 +14,7 @@ The following diagram illustrates how user interactions on the website are track
 graph TD
     User([Visitor Browser]) -->|1. Interaction / Page Load| WebGTM[Web GTM Container <br> GTM-KR894J8P]
     
-    subgraph Client-Side (Browser)
+    subgraph "Client-Side (Browser)"
         WebGTM -->|2. Pushes event & consent| DL[dataLayer]
         DL -->|3. Check Consent state| ConsentGate{DLV - analytics_consent == true?}
         ConsentGate -->|No| Suppressed[Hits Suppressed]
@@ -23,7 +23,7 @@ graph TD
     
     GA4Tags -->|4. Send HTTP requests via custom domain| ServerGTM[Server GTM Container <br> GTM-PS3KHKB6 <br> serverside.simonask.io]
     
-    subgraph Server-Side (GCP)
+    subgraph "Server-Side (GCP)"
         ServerGTM -->|5. Claims & parses request| GA4Client[GA4 Client]
         GA4Client -->|6. Triggers forwarding tag| GA4ServerTag[GA4 Config Tag]
         GA4ServerTag -->|7. Lookups request host| LKP{LKP - GA4 measurement ID}
