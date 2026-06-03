@@ -12,34 +12,28 @@ The following diagram illustrates how user interactions on the website are track
 
 ```mermaid
 graph TD
-    User([Visitor Browser]) -->|1. Interaction / Page Load| WebGTM[Web GTM Container <br> GTM-KR894J8P]
+    User([Visitor]) -->|Page Load / Click| WebGTM[Web GTM Container]
     
     subgraph "Client-Side (Browser)"
-        WebGTM -->|2. Pushes event & consent| DL[dataLayer]
-        DL -->|3. Check Consent state| ConsentGate{DLV - analytics_consent == true?}
+        WebGTM -->|Event & Consent| DL[dataLayer]
+        DL -->|Check Consent| ConsentGate{Consent Granted?}
         ConsentGate -->|No| Suppressed[Hits Suppressed]
         ConsentGate -->|Yes| GA4Tags[GA4 Web Tags]
     end
     
-    GA4Tags -->|4. Send HTTP requests via custom domain| ServerGTM[Server GTM Container <br> GTM-PS3KHKB6 <br> serverside.simonask.io]
+    GA4Tags -->|HTTPS Post| ServerGTM[Server GTM Container]
     
     subgraph "Server-Side (GCP)"
-        ServerGTM -->|5. Claims & parses request| GA4Client[GA4 Client]
-        GA4Client -->|6. Triggers forwarding tag| GA4ServerTag[GA4 Config Tag]
-        GA4ServerTag -->|7. Lookups request host| LKP{LKP - GA4 measurement ID}
+        ServerGTM -->|Parse Request| GA4Client[GA4 Client]
+        GA4Client -->|Forward Event| GA4ServerTag[GA4 Config Tag]
+        GA4ServerTag -->|Lookup Host| LKP{Hostname}
         
-        LKP -->|localhost / stage.simonask.io| Stage[GA4 Staging Property <br> G-GX5EW99T18]
-        LKP -->|simonask.io / www.simonask.io| Prod[GA4 Production Property <br> G-9Z7Z8G75Q2]
+        LKP -->|Staging Domain| Stage[GA4 Staging]
+        LKP -->|Production Domain| Prod[GA4 Production]
     end
     
-    Stage -->|8. Dispatch| GA_Stage([Google Analytics Staging])
-    Prod -->|8. Dispatch| GA_Prod([Google Analytics Production])
-    
-    style User fill:#f9f,stroke:#333,stroke-width:2px
-    style WebGTM fill:#bbf,stroke:#333,stroke-width:2px
-    style ServerGTM fill:#fbf,stroke:#333,stroke-width:2px
-    style Stage fill:#dfd,stroke:#333,stroke-width:2px
-    style Prod fill:#dfd,stroke:#333,stroke-width:2px
+    Stage -->|Dispatch| GA_Stage([Google Analytics Staging])
+    Prod -->|Dispatch| GA_Prod([Google Analytics Production])
 ```
 
 ---
