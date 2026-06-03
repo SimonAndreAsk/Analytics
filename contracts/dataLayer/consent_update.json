@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ConsentUpdateEvent",
+  "description": "Fired when the visitor updates cookie settings via the CMP.",
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "consent_update"
+    },
+    "analytics": {
+      "description": "Indicates whether the user has granted consent for analytics cookies.",
+      "type": "boolean"
+    }
+  },
+  "required": ["event", "analytics"],
+  "additionalProperties": false
+}

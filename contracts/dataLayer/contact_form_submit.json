@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContactFormSubmitEvent",
+  "description": "Fired upon a successful contact form submission.",
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "contact_form_submit"
+    },
+    "form_location": {
+      "description": "The page or component where the contact form is located.",
+      "type": "string"
+    }
+  },
+  "required": ["event", "form_location"],
+  "additionalProperties": false
+}

@@ -9,6 +9,7 @@ It covers both the **Client-Side (Web) GTM Container** and the **Server-Side (GC
 - **[docs/GTM](./docs/GTM)**: Central Google Tag Manager (GTM) documentation and tracking architecture overview.
   - **[docs/GTM/simonask.io (web)](./docs/GTM/simonask.io%20(web)/README.md)**: Specifications for the Client-Side Web Container (GTM-KR894J8P), including tags, triggers, variables, and cookie consent logic.
   - **[docs/GTM/simonask.io (server)](./docs/GTM/simonask.io%20(server)/README.md)**: Specifications for the Server-Side GCP Container (GTM-PS3KHKB6) running at `serverside.simonask.io` for first-party cookie management and dynamic environment routing.
+- **[contracts](./contracts)**: Language-agnostic **JSON Schema data contracts** for validating `dataLayer` pushes from the frontend application, preventing schema drift and tracking bugs.
 
 ## Architecture Highlights
 

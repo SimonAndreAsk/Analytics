@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContactClickEvent",
+  "description": "Fired when a visitor clicks a contact button.",
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "contact_click"
+    },
+    "button_location": {
+      "description": "The visual location of the clicked button.",
+      "type": "string",
+      "enum": ["header", "hero", "footer", "body"]
+    }
+  },
+  "required": ["event", "button_location"],
+  "additionalProperties": false
+}
