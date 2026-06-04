@@ -4,18 +4,20 @@ This directory contains version-controlled **JSON Schemas** for all tracking eve
 
 These contracts serve as a formal agreement between the web development team and the analytics team, ensuring that tracking parameters don't drift or break during site updates.
 
-## Available Schemas
-
-- **[`consent_update.json`](./dataLayer/consent_update.json)**: Triggered when cookie settings change.
-- **[`contact_click.json`](./dataLayer/contact_click.json)**: Triggered when contact buttons are clicked.
-- **[`contact_form_submit.json`](./dataLayer/contact_form_submit.json)**: Triggered on successful lead form submission.
-
 ---
 
 ## Integration and Setup Guide
 
 For a complete setup walkthrough, copy-pasteable testing recipes (for **Playwright** and **Cypress**), and TypeScript helper classes, refer to the:
 👉 **[Frontend Integration & Testing Guide](./developer_integration.md)**
+
+---
+
+## Available Schemas
+
+- **[`consent_update.json`](./dataLayer/consent_update.json)**: Triggered when cookie settings change.
+- **[`contact_click.json`](./dataLayer/contact_click.json)**: Triggered when contact buttons are clicked.
+- **[`contact_form_submit.json`](./dataLayer/contact_form_submit.json)**: Triggered on successful lead form submission.
 
 ---
 
