@@ -11,7 +11,19 @@ function validateContracts() {
     process.exit(1);
   }
 
-  const files = fs.readdirSync(CONTRACTS_DIR).filter(file => file.endsWith('.json'));
+  const args = process.argv.slice(2);
+  let files = fs.readdirSync(CONTRACTS_DIR).filter(file => file.endsWith('.json'));
+  
+  if (args.length > 0) {
+    const targetFile = args[0];
+    if (files.includes(targetFile)) {
+      files = [targetFile];
+      console.log(`🎯 Targeting single contract validation for: "${targetFile}"`);
+    } else {
+      console.error(`❌ Error: File "${targetFile}" was not found in the contracts directory!`);
+      process.exit(1);
+    }
+  }
   
   if (files.length === 0) {
     console.warn("⚠️ No schema files found in the directory.");
