@@ -20,16 +20,21 @@ flowchart LR
     D -->|Conversion Import| G[Google Ads / Marketing]
 ```
 
+### Team Roles & Areas of Responsibility
+To ensure seamless coordination and avoid gaps, ownership is divided as follows:
+* **Development (Dev) Team**: Responsible for frontend code implementation, frontend type safety, dataLayer pushes, and running local/CI schema verification tests.
+* **Analytics Team**: Responsible for tracking strategy, drafting JSON schemas (data contracts), Google Tag Manager configuration (Web/Server tags, triggers, variables), GA4 property settings, BigQuery views, and BI dashboards.
+
 ### Breakdown of Downstream Dependencies
 
-| Component | Depends On | Common Failure Mode | Impact |
-| :--- | :--- | :--- | :--- |
-| **Web GTM** | `dataLayer` structure | Field name change (e.g., `button_location` $\rightarrow$ `btn_loc`) | GTM variables resolve to `undefined`; triggers fail to fire or tags send empty fields. |
-| **Server GTM** | Web GTM request body | Hostname parameter name (`page_hostname`) | Server container fails to route events dynamically, routing production hits to staging property. |
-| **Google Analytics 4** | Web GTM tag setup | Custom definitions, event parameters | Missing parameters in reports, broken engagement metrics, lost custom dimension data. |
-| **Google Ads** | GA4 Event Conversions | GA4 event names (`contact_form_submit`) | Conversion tracking stops, bidding algorithms lose signal, ad campaign performance drops. |
-| **BigQuery** | GA4 schema structure | Event/parameter names in JSON payload | Nested SQL queries fail (`event_params.value.string_value` is null), breaking daily data runs. |
-| **Looker Studio / Power BI**| BigQuery views or GA4 API | Table schemas, dimension names | Broken dashboard charts, error widgets, invalid KPIs presented to stakeholders. |
+| Component | Depends On | Common Failure Mode | Impact | Primary Owner |
+| :--- | :--- | :--- | :--- | :--- |
+| **Web GTM** | `dataLayer` structure | Field name change (e.g., `button_location` $\rightarrow$ `btn_loc`) | GTM variables resolve to `undefined`; triggers fail to fire or tags send empty fields. | **Analytics Team** |
+| **Server GTM** | Web GTM request body | Hostname parameter name (`page_hostname`) | Server container fails to route events dynamically, routing production hits to staging property. | **Analytics Team** |
+| **Google Analytics 4** | Web GTM tag setup | Custom definitions, event parameters | Missing parameters in reports, broken engagement metrics, lost custom dimension data. | **Analytics Team** |
+| **Google Ads** | GA4 Event Conversions | GA4 event names (`contact_form_submit`) | Conversion tracking stops, bidding algorithms lose signal, ad campaign performance drops. | **Analytics Team** |
+| **BigQuery** | GA4 schema structure | Event/parameter names in JSON payload | Nested SQL queries fail (`event_params.value.string_value` is null), breaking daily data runs. | **Analytics Team** |
+| **Looker Studio / Power BI**| BigQuery views or GA4 API | Table schemas, dimension names | Broken dashboard charts, error widgets, invalid KPIs presented to stakeholders. | **Analytics Team** |
 
 ---
 
@@ -52,7 +57,7 @@ stateDiagram-v2
 
 ## 3. Implementation: Preventing Breakage at Each Stage
 
-### A. Frontend Application (Shift-Left Validation)
+### A. Frontend Application (Shift-Left Validation) — *Owned by Dev Team*
 
 Frontend developers should have compile-time checks and test gates so that they cannot merge code changes that violate the tracking schema.
 
@@ -101,7 +106,7 @@ if (!isValid) {
 
 ---
 
-### B. Google Tag Manager (Workspace Mapping & Verification)
+### B. Google Tag Manager (Workspace Mapping & Verification) — *Owned by Analytics Team*
 
 GTM has its own internal dependency map (Variables $\rightarrow$ Triggers $\rightarrow$ Tags). 
 
@@ -155,7 +160,7 @@ async function auditGtmContainer() {
 
 ---
 
-### C. Downstream Systems (GA4 & BigQuery)
+### C. Downstream Systems (GA4 & BigQuery) — *Owned by Analytics Team*
 
 #### 1. GA4 Custom Dimension Registration
 If you send parameters like `button_location` or `form_location` in your GA4 events, you **must** register them as Custom Dimensions in the GA4 UI. Failing to do this means the parameters are collected but will not be accessible in standard reports or APIs.
@@ -193,13 +198,14 @@ WHERE
 
 When modifying or adding tracking events, follow this exact checklist:
 
-1. **Schema Update**: Update/create the schema JSON file in `contracts/dataLayer/`.
-2. **GTM Preview**: Create a new workspace in Google Tag Manager (e.g. `Dev - Add X Property`). 
+1. **Schema Update** (*Owner: Analytics Team*): Update/create the schema JSON file in `contracts/dataLayer/`.
+2. **GTM Preview** (*Owner: Analytics Team*): Create a new workspace in Google Tag Manager (e.g. `Dev - Add X Property`). 
    - Add/update Variables, Triggers, and Tags.
    - Run GTM Preview mode to test the changes locally.
-3. **Frontend Integration**: Generate updated TypeScript interfaces and implement the tracking code on the frontend.
-4. **CI Validation**: Run E2E tests validating the front-end pushes against the schema.
-5. **GA4 Audit**: Register any new parameters as Custom Dimensions in GA4.
-6. **Publish GTM Workspace**: Publish the GTM container workspace version.
-7. **Deploy Frontend Code**: Deploy the frontend changes to production.
-8. **Downstream SQL Update**: If necessary, update BigQuery views or Looker Studio fields to include the new parameters.
+3. **Frontend Integration** (*Owner: Dev Team*): Generate updated TypeScript interfaces and implement the tracking code on the frontend.
+4. **CI Validation** (*Owner: Dev Team*): Run E2E tests validating the front-end pushes against the schema.
+5. **GA4 Audit** (*Owner: Analytics Team*): Register any new parameters as Custom Dimensions in GA4.
+6. **Publish GTM Workspace** (*Owner: Analytics Team*): Publish the GTM container workspace version.
+7. **Deploy Frontend Code** (*Owner: Dev Team*): Deploy the frontend changes to production.
+8. **Downstream SQL Update** (*Owner: Analytics Team*): If necessary, update BigQuery views or Looker Studio fields to include the new parameters.
+
