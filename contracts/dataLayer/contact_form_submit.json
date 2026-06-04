@@ -13,6 +13,9 @@
       "type": "string"
     }
   },
-  "required": ["event", "form_location"],
+  "required": [
+    "event",
+    "form_location"
+  ],
   "additionalProperties": false
 }

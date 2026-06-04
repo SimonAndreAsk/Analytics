@@ -12,44 +12,17 @@ These contracts serve as a formal agreement between the web development team and
 
 ---
 
-## How to Use & Scale
+## Integration and Setup Guide
 
-### 1. Compile-Time Type Generation
-You can automatically generate TypeScript interfaces directly from these JSON schemas in your frontend repository. 
-Using a tool like [`json-schema-to-typescript`](https://www.npmjs.com/package/json-schema-to-typescript):
+For a complete setup walkthrough, copy-pasteable testing recipes (for **Playwright** and **Cypress**), and TypeScript helper classes, refer to the:
+👉 **[Frontend Integration & Testing Guide](./developer_integration.md)**
 
-```bash
-# Generate types
-npx json-schema-to-typescript contracts/dataLayer/contact_click.json > types/tracking.d.ts
-```
+---
 
-This generates:
-```typescript
-export interface ContactClickEvent {
-  event: "contact_click";
-  button_location: "header" | "hero" | "footer" | "body";
-}
-```
+## Modifying Tracking Specs (SOP)
 
-### 2. Runtime Validation in E2E Tests
-You can load these schemas in your Playwright, Cypress, or Cypress-based E2E tests to validate that tracking events fired on the site comply with the contract:
+When tracking requirements change:
+1. **Schema Update**: Create a pull request modifying or adding a schema file in `dataLayer/`.
+2. **GTM Configuration**: Once the PR is approved, configure the corresponding variable, trigger, and tag updates in GTM.
+3. **Frontend Sync**: Pull the updated schemas into the frontend project using your team's sync method (git submodule, package update, or download script), then generate the updated TypeScript types and implement the changes.
 
-```javascript
-import Ajv from 'ajv';
-import contactClickSchema from '../contracts/dataLayer/contact_click.json';
-
-const ajv = new Ajv();
-const validate = ajv.compile(contactClickSchema);
-
-// During E2E test, intercept window.dataLayer.push calls
-const isValid = validate(dataLayerPushObject);
-if (!isValid) {
-  console.error(validate.errors);
-  throw new Error("dataLayer event does not match tracking contract!");
-}
-```
-
-### 3. Modifying Tracking Specs
-1. When tracking requirements change (e.g. adding a new parameter like `user_id` or a new event), **create a pull request modifying/adding a schema file here first**.
-2. Once the PR is approved, update the GTM container variables/tags to match.
-3. Pull the updated schema into the frontend project to implement/test the updated payload structure.
