@@ -11,9 +11,17 @@
     "button_location": {
       "description": "The visual location of the clicked button.",
       "type": "string",
-      "enum": ["header", "hero", "footer", "body"]
+      "enum": [
+        "header",
+        "hero",
+        "footer",
+        "body"
+      ]
     }
   },
-  "required": ["event", "button_location"],
+  "required": [
+    "event",
+    "button_location"
+  ],
   "additionalProperties": false
 }
